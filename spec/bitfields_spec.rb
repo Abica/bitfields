@@ -29,4 +29,17 @@ describe BitFields do
     b[:end] = 0b101
     a[:end].bit_string.should == "000"
   end
+
+
+  it "should give the correct total length" do
+    a = BitFields.create(:test)
+    a.total_length.should == 16
+  end
+
+  it "should be able to decode a message" do
+    a = BitFields.decode(:test, 0b0001111111111000)
+    a[:start].bit_string.should == "000"
+    a[:middle].bit_string.should == "1111111111"
+    a[:end].bit_string.should == "000"
+  end
 end

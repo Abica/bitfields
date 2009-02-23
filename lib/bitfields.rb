@@ -6,16 +6,40 @@ class BitFields
   
   def self.template(template_name, &block)
     template_name = symbol_if_string(template_name)
-    templates[template_name] = self.new
-    yield templates[template_name]
+    templates[template_name] = block
     nil
   end
  
   def self.create(template_name, params = {})
     template_name = symbol_if_string(template_name)
-    instance = Marshal.load(Marshal.dump(templates[template_name])) # Deep clone
-    params.each_pair { | field_name, value | instance[field_name] = value }
-    instance
+    if templates[template_name]
+      instance = self.new
+      templates[template_name].call(instance)
+      params.each_pair { | field_name, value | instance[field_name] = value }
+      instance
+    else
+      warn "BitFields: No template named #{template_name}"
+      nil
+    end
+  end
+
+  def self.decode(template_name, value)
+    template_name = symbol_if_string(template_name)
+    if templates[template_name]
+      instance = self.new
+      templates[template_name].call(instance)
+      bit_string = Bits.new(value, instance.total_length).bit_string
+      current_index = 0
+      instance.field_names.each_with_index do |field_name, index|
+        length = instance.field_lengths[index]
+        instance[field_name] = bit_string[current_index, length].to_i(2)
+        current_index += length
+      end
+      instance
+    else
+      warn "BitFields: No template named #{template_name}"
+      nil
+    end
   end
 
   def self.compose(&block)
@@ -31,17 +55,25 @@ class BitFields
   def hex_string; get_bits.hex_string end
   def oct_string; get_bits.oct_string end
 
-  def add(field_name, object)
+  def total_length
+    field_lengths.inject { |total, length| total + length }
+  end
+
+  def add(field_name, instance)
     field_name = BitFields.symbol_if_string(field_name)
-    field_names << field_name
-    field_values << object.get_bits
+    if instance
+      field_names << field_name
+      field_values << instance.get_bits
+    end
   end
 
   def bring(template_name, params = {})
-    name = BitFields.symbol_if_string(name)
-    object = BitFields.create(name, params)
-    field_names << template_name 
-    field_values << object.get_bits
+    template_name = BitFields.symbol_if_string(template_name)
+    instance = BitFields.create(template_name, params)
+    if instance
+      field_names << template_name
+      field_values << instance.get_bits
+    end
   end
 
   def bits(field_name, params = {})
@@ -50,6 +82,7 @@ class BitFields
     length = params.key?(:length) ? params[:length] : 0
     field_names << field_name
     field_values << Bits.new(value, length)
+    field_lengths << length
   end
 
   def get_bits
@@ -73,6 +106,10 @@ class BitFields
 
   def field_values
     @field_values ||= Array.new
+  end
+
+  def field_lengths
+    @field_lengths ||= Array.new
   end
 
   private
