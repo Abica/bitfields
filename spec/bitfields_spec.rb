@@ -42,4 +42,11 @@ describe BitFields do
     a[:middle].bit_string.should == "1111111111"
     a[:end].bit_string.should == "000"
   end
+
+  it "should output leading zeroes appropriately in bit_string, hex_string, and oct_string" do
+    a = BitFields.create(:test, :start => 0, :end => 0b111)
+    a.bit_string.should == "0000000000000111"
+    a.hex_string.should == "0007"
+    a.oct_string.should == "000007"
+  end
 end

@@ -13,7 +13,10 @@ class Bits
   end
 
   def +(bits)
-    Bits.new("0b#{@bits}" + bit_string_from_input(bits))
+    bit_string_to_concat = bit_string_from_input(bits)
+    length = @bits.length + bit_string_to_concat.length
+    string = "0b#{@bits}#{bit_string_to_concat}"
+    Bits.new(string, length)
   end
 
   def bit_string
@@ -21,11 +24,11 @@ class Bits
   end
 
   def hex_string
-    @bits.to_i(2).to_s(16)
+    "%0#{(@bits.length / 4) + (@bits.length % 4)}x" % @bits.to_i(2)
   end
 
   def oct_string
-    @bits.to_i(2).to_s(8)
+    "%0#{(bit_string.length / 3) + (bit_string.length % 3)}o" % bit_string.to_i(2)
   end
 
   def integer
