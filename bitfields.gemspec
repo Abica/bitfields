@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = %q{sanderjd@gmail.com}
   s.files = ["README", "Rakefile", "demo.rb", "lib/bitfields.rb", "lib/bits.rb"]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/sanderjd/bitfields}
+  s.homepage = %q{http://github.com/jsanders/bitfields}
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.1}
   s.summary = %q{Simple named bit fields}
