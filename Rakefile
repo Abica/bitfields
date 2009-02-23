@@ -24,7 +24,7 @@ begin
     s.summary = "Simple named bit fields"
     s.description = "A very simple library for building binary data by declaring named bit fields"
     s.email = 'sanderjd@gmail.com'
-    s.homepage = 'http://github.com/sanderjd/bitfields'
+    s.homepage = 'http://github.com/jsanders/bitfields'
     s.authors = ['James Sanders']
     s.has_rdoc = true
     s.files = ["README",
