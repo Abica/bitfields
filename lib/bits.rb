@@ -24,11 +24,11 @@ class Bits
   end
 
   def hex_string
-    "%0#{(@bits.length / 4) + (@bits.length % 4)}x" % @bits.to_i(2)
+    "%0#{(@bits.length / 4.0).ceil}x" % @bits.to_i(2)
   end
 
   def oct_string
-    "%0#{(bit_string.length / 3) + (bit_string.length % 3)}o" % bit_string.to_i(2)
+    "%0#{(@bits.length / 3.0).ceil}o" % @bits.to_i(2)
   end
 
   def integer
